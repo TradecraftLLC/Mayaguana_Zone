@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mayaguana Satellite Box Map</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+  <style>
+    #map { height: 100vh; width: 100vw; }
+    .corner-label { background: white; padding: 4px 8px; border-radius: 4px; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+  <script>
+    // Center map on Mayaguana, Bahamas
+    var map = L.map('map').setView([22.355, -73.137], 10);
+
+    // Add Esri World Imagery (satellite)
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/' +
+      'World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS'
+    }).addTo(map);
+
+    // Define box corners (DMS converted to DD)
+    var corners = [
+      { coords: [22.335278, -72.726389], label: "1: 22°20′07.0″N, 72°43′35.0″W" },
+      { coords: [22.321111, -72.665278], label: "2: 22°19′16.0″N, 72°39′55.0″W" },
+      { coords: [22.300556, -72.661389], label: "3: 22°18′02.0″N, 72°39′41.0″W" },
+      { coords: [22.296667, -72.741111], label: "4: 22°17′48.0″N, 72°44′28.0″W" }
+    ];
+
+    // Draw polygon connecting corners
+    var latlngs = corners.map(function(c) { return c.coords; });
+    latlngs.push(corners[0].coords);
+    L.polyline(latlngs, { color: 'red', weight: 3 }).addTo(map);
+
+    // Add markers and labels
+    corners.forEach(function(c) {
+      L.marker(c.coords).addTo(map)
+        .bindPopup('<div class="corner-label">' + c.label + '</div>');
+    });
+  </script>
+</body>
+</html>
